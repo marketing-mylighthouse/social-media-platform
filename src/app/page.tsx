@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import Link from "next/link";
 
 const WorkflowBoard = dynamic(
   () => import("@/components/workflow/WorkflowBoard"),
@@ -39,13 +40,11 @@ export default function Home() {
             </span>
           </div>
 
-          {/* Status indicators */}
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800">
-            <div className="flex items-center gap-1.5">
-              <div className="w-2 h-2 rounded-full bg-green-500" />
-              <span className="text-[10px] text-zinc-400">System Ready</span>
-            </div>
-          </div>
+          {/* Nav */}
+          <nav className="flex items-center gap-1">
+            <Link href="/" className="px-3 py-1.5 rounded-md text-xs text-zinc-200 bg-zinc-800">Workflow</Link>
+            <Link href="/dashboard" className="px-3 py-1.5 rounded-md text-xs text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 transition-colors">Dashboard</Link>
+          </nav>
         </div>
       </header>
 

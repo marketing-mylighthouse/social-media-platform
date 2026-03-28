@@ -18,6 +18,7 @@ import "@xyflow/react/dist/style.css";
 
 import PipelineNode from "./PipelineNode";
 import FileNode from "./FileNode";
+import DetailPanel from "./DetailPanel";
 
 const nodeTypes: NodeTypes = {
   pipeline: PipelineNode,
@@ -307,35 +308,56 @@ const initialEdges: Edge[] = [
 export default function WorkflowBoard() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [selectedNode, setSelectedNode] = useState<string | null>(null);
+  const [selectedNodeData, setSelectedNodeData] = useState<any>(null);
+
+  const onNodeClick = useCallback((_: any, node: Node) => {
+    setSelectedNode(node.id);
+    setSelectedNodeData(node.data);
+  }, []);
 
   return (
-    <div className="w-full h-full">
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        nodeTypes={nodeTypes}
-        fitView
-        fitViewOptions={{ padding: 0.15 }}
-        minZoom={0.3}
-        maxZoom={1.5}
-        defaultEdgeOptions={edgeDefaults}
-        proOptions={{ hideAttribution: true }}
-      >
-        <Background variant={BackgroundVariant.Dots} gap={20} size={1} color="#1a1a1e" />
-        <Controls showInteractive={false} />
-        <MiniMap
-          nodeColor={(node) => {
-            if (node.type === "file") return "#3f3f46";
-            const accent = (node.data as any)?.accent;
-            return accent || "#3f3f46";
+    <div className="w-full h-full flex">
+      <div className="flex-1">
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onNodeClick={onNodeClick}
+          nodeTypes={nodeTypes}
+          fitView
+          fitViewOptions={{ padding: 0.15 }}
+          minZoom={0.3}
+          maxZoom={1.5}
+          defaultEdgeOptions={edgeDefaults}
+          proOptions={{ hideAttribution: true }}
+        >
+          <Background variant={BackgroundVariant.Dots} gap={20} size={1} color="#1a1a1e" />
+          <Controls showInteractive={false} />
+          <MiniMap
+            nodeColor={(node) => {
+              if (node.type === "file") return "#3f3f46";
+              const accent = (node.data as any)?.accent;
+              return accent || "#3f3f46";
+            }}
+            maskColor="rgba(0,0,0,0.7)"
+            pannable
+            zoomable
+          />
+        </ReactFlow>
+      </div>
+
+      {selectedNode && (
+        <DetailPanel
+          nodeId={selectedNode}
+          nodeData={selectedNodeData}
+          onClose={() => {
+            setSelectedNode(null);
+            setSelectedNodeData(null);
           }}
-          maskColor="rgba(0,0,0,0.7)"
-          pannable
-          zoomable
         />
-      </ReactFlow>
+      )}
     </div>
   );
 }
