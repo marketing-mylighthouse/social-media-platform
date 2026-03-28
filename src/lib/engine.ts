@@ -2,11 +2,18 @@ import fs from "fs";
 import path from "path";
 
 // Engine root path — in production this will be an env var
-// For local dev, the engine is a sibling folder
-const ENGINE_ROOT =
-  process.env.ENGINE_PATH ||
-  path.resolve(process.cwd(), "..", "Social Media Engine") ||
-  path.resolve(process.cwd(), "..");
+// For local dev, the platform lives INSIDE the engine folder:
+//   Social Media Engine/social-media-platform/  ← cwd()
+//   Social Media Engine/companies/              ← engine root is parent
+//   Social Media Engine/skills/
+//
+// So engine root = one level up from cwd
+const ENGINE_ROOT = process.env.ENGINE_PATH || path.resolve(process.cwd(), "..");
+
+// Debug: log the resolved path on startup
+console.log("[Engine] Root path:", ENGINE_ROOT);
+console.log("[Engine] Companies dir exists:", fs.existsSync(path.join(ENGINE_ROOT, "companies")));
+console.log("[Engine] Skills dir exists:", fs.existsSync(path.join(ENGINE_ROOT, "skills")));
 
 // ============================================================
 // PATH HELPERS
